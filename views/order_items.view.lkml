@@ -84,7 +84,7 @@ view: order_items {
   dimension_group: shipping_days {
     type: duration
     description: "Calculates duration of shipping an item in days"
-    intervals: [day]
+    intervals: [day, month]
     sql_start: ${shipped_date} ;;
     sql_end: ${delivered_date} ;;
   }
@@ -115,6 +115,7 @@ view: order_items {
     type: sum
     description: "Calculates total sales from items sold"
     sql: ${sale_price} ;;
+    value_format_name: usd
     label: "Total Sale Price"
     group_label: "Sales metrics"
   }
@@ -123,6 +124,7 @@ view: order_items {
     type: average
     description: "Calculates average sales price of items sold"
     sql: ${sale_price} ;;
+    value_format_name: usd
     label: "Average Sale Price"
     group_label: "Sales metrics"
   }
@@ -131,6 +133,7 @@ view: order_items {
     type: running_total
     description: "Calculates cumulative total sales from items sold"
     sql: ${sale_price} ;;
+    value_format_name: usd
     label: "Cumulative Total Sales"
     group_label: "Sales metrics"
   }
