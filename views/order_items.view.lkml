@@ -84,7 +84,7 @@ view: order_items {
   dimension_group: shipping_days {
     type: duration
     description: "Calculates duration of shipping an item in days"
-    intervals: [day, month]
+    intervals: [day]
     sql_start: ${shipped_date} ;;
     sql_end: ${delivered_date} ;;
   }
