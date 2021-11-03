@@ -5,6 +5,7 @@ view: order_items {
 
   dimension: id {
     primary_key: yes
+    hidden:  yes
     type: number
     sql: ${TABLE}."ID" ;;
   }
@@ -39,12 +40,13 @@ view: order_items {
 
   dimension: inventory_item_id {
     type: number
-    # hidden: yes
+    hidden: yes
     sql: ${TABLE}."INVENTORY_ITEM_ID" ;;
   }
 
   dimension: order_id {
     type: number
+    hidden: yes
     sql: ${TABLE}."ORDER_ID" ;;
   }
 
@@ -102,139 +104,139 @@ view: order_items {
 
   dimension: user_id {
     type: number
-    # hidden: yes
+    hidden: yes
     sql: ${TABLE}."USER_ID" ;;
   }
 
+  # measure: count {
+  #   type: count
+  #   hidden: yes
+  #   drill_fields: [detail*]
+  # }
+
   measure: count {
     type: count
-    drill_fields: [detail*]
+    label: "Order Items Count"
   }
 
   measure: total_sale_price {
     type: sum
+    label: "Total Sale Price"
     description: "Calculates total sales from items sold"
     sql: ${sale_price} ;;
     value_format_name: usd
-    label: "Total Sale Price"
-    group_label: "Price metrics"
+    group_label: "Revenues"
   }
 
   measure: avg_sale_price {
     type: average
+    label: "Average Sale Price"
     description: "Calculates average sales price of items sold"
     sql: ${sale_price} ;;
     value_format_name: usd
-    label: "Average Sale Price"
-    group_label: "Price metrics"
+    group_label: "Revenues"
   }
 
   measure: cumul_total_sales {
     type: running_total
+    label: "Cumulative Total Sales"
     description: "Calculates cumulative total sales from items sold"
     sql: ${sale_price} ;;
     value_format_name: usd
-    label: "Cumulative Total Sales"
-    group_label: "Revenue metrics"
+    group_label: "Revenues"
   }
 
   measure: total_gross_revenue {
     type: sum
-    description: "Calculates total revenue from completed sales (excluding cancelled and returned orders)"
-    sql: ${sale_price} & ${is_returned} = 'False' ;;
-    value_format_name: usd
     label: "Total Gross Revenue"
-    group_label: "Revenue metrics"
+    description: "Total revenue from completed sales, excluding cancelled and returned orders"
+    filters: [status: "-Returned, -Cancelled"]
+    sql: ${sale_price};;
+    value_format_name: usd
+    group_label: "Revenues"
   }
 
-  measure: total_cost {
-    type: sum
-    description: "Total cost of items sold from inventory"
-    sql: ${inventory_items.cost};;
-    value_format_name: usd
-    label: "Total Cost"
-    group_label: "Cost metrics"
-  }
-
-  measure: average_cost {
-    type: average
-    description: "Total cost of items sold from inventory"
-    sql: ${inventory_items.cost} ;;
-    value_format_name: usd
-    label: "Average Cost"
-    group_label: "Cost metrics"
-  }
-
-  measure: total_gross_margin {
-    type: sum
-    description: "Total difference between the total revenue from completed sales and the cost of the goods that were sold"
-    sql: (${sale_price} & ${is_returned} = 'False') - ${inventory_items.cost};;
-    value_format_name: usd
+  measure: total_gross_margin_amount {
+    type: number
     label: "Total Gross Margin Amount"
-    group_label: "Margin metrics"
+    description: "Total difference between the total revenue from completed sales and the cost of the goods that were sold"
+    sql: ${total_gross_revenue} - ${inventory_items.total_cost};;
+    value_format_name: usd
+    group_label: "Margins"
   }
 
   measure: average_gross_margin {
-    type: average
-    description: "Average difference between the total revenue from completed sales and the cost of the goods that were sold"
-    sql: (${sale_price} & ${is_returned} = 'False') - ${inventory_items.cost};;
-    value_format_name: usd
+    type: number
     label: "Average Gross Margin"
-    group_label: "Margin metrics"
+    description: "Average difference between the total revenue from completed sales and the cost of the goods that were sold"
+    sql: ${total_gross_revenue} - ${inventory_items.total_cost};;
+    value_format_name: usd
+    group_label: "Margins"
   }
 
   measure: gross_margin_ratio {
     type: number
-    description: "Total Gross Margin Amount / Total Gross Revenue"
-    sql: ${total_gross_margin} / ${total_gross_revenue};;
-    value_format_name: percent_2
     label: "Gross Margin %"
-    group_label: "Margin metrics"
+    description: "Total Gross Margin Amount / Total Gross Revenue"
+    sql: ${total_gross_margin_amount} / ${total_gross_revenue};;
+    value_format_name: percent_2
+    group_label: "Margins"
   }
 
-  measure: items_returned {
-    type: sum
-    description: "Number of items that were returned by dissatisfied customers"
-    sql: ${is_returned} = 'True';;
-    value_format_name: decimal_0
+  measure: number_of_items_returned {
+    type: count_distinct
     label: "Number of Items Returned"
-    group_label: "Product return metrics"
+    description: "Number of items that were returned by dissatisfied customers"
+    filters: [status: "Returned"]
+    sql: ${inventory_item_id};;
+    group_label: "Products Returned"
   }
 
   measure: item_return_rate{
     type: number
-    description: "Number of items returned / total number of items sold"
-    sql: ${items_returned} / COUNT(${inventory_item_id});;
-    value_format_name: percent_2
     label: "Item Return Ratio"
-    group_label: "Product return metrics"
+    description: "Number of items returned / total number of items sold"
+    sql: ${number_of_items_returned} / ${count};;
+    value_format_name: percent_2
+    group_label: "Products Returned"
   }
 
-  measure: returning_customers{
-    type: sum_distinct
-    description: "Number of Customers who have returned an item at some point"
-    sql: ${users.id} & ${is_returned} = 'True';;
-    value_format_name: decimal_0
+  measure: customers_returning_items{
+    type: count_distinct
     label: "Number of Customers Returning Items"
-    group_label: "Product return metrics"
+    description: "Number of customers who have returned an item at some point"
+    filters: [status: "Returned"]
+    sql: ${user_id};;
+    group_label: "Products Returned"
   }
 
   measure: returning_customers_pct{
     type: number
-    description: "Number of Customer Returning Items / total number of customers"
-    sql: ${returning_customers} / COUNT(${users.id});;
-    value_format_name: percent_2
     label: "% of Customers with Returns"
-    group_label: "Product return metrics"
+    description: "Number of Customer Returning Items / total number of customers"
+    sql: ${customers_returning_items} / NULLIF(${users.count}, 0);;
+    value_format_name: percent_2
+    group_label: "Products Returned"
   }
 
   measure: average_spend_per_customer{
     type: number
-    description: "Total Sale Price / total number of customers"
-    sql: ${total_sale_price} / COUNT(${users.id});;
-    value_format_name: usd
     label: "Average Spend per Customer"
-    group_label: "Revenue metrics"
+    description: "Total Sale Price / total number of customers"
+    sql: ${total_sale_price} / ${users.count};;
+    value_format_name: usd
+    group_label: "Revenues"
+  }
+
+
+  # Set of fields for Customer explore
+
+  set: behavior {
+    fields: [
+      average_spend_per_customer,
+      customers_returning_items,
+      returning_customers_pct
+      ]
   }
 
 

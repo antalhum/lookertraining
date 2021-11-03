@@ -5,6 +5,7 @@ view: distribution_centers {
 
   dimension: id {
     primary_key: yes
+    hidden:  yes
     type: number
     sql: ${TABLE}."ID" ;;
   }
@@ -24,8 +25,22 @@ view: distribution_centers {
     sql: ${TABLE}."NAME" ;;
   }
 
+  dimension: user_location {
+    type: location
+    label: "Center Location"
+    description: "Distribution center latitude and longitude coordinates"
+    sql_latitude: ${latitude} ;;
+    sql_longitude: ${longitude} ;;
+  }
+
   measure: count {
     type: count
-    drill_fields: [id, name, products.count]
-  }
+    label: "Distribution Center Count"
+    }
+
+  # measure: count {
+  #   type: count
+  #   drill_fields: [id, name, products.count]
+  # }
+
 }

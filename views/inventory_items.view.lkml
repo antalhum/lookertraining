@@ -5,6 +5,7 @@ view: inventory_items {
 
   dimension: id {
     primary_key: yes
+    hidden:  yes
     type: number
     sql: ${TABLE}."ID" ;;
   }
@@ -45,12 +46,13 @@ view: inventory_items {
 
   dimension: product_distribution_center_id {
     type: number
+    hidden: yes
     sql: ${TABLE}."PRODUCT_DISTRIBUTION_CENTER_ID" ;;
   }
 
   dimension: product_id {
     type: number
-    # hidden: yes
+    hidden: yes
     sql: ${TABLE}."PRODUCT_ID" ;;
   }
 
@@ -83,13 +85,31 @@ view: inventory_items {
     sql: ${TABLE}."SOLD_AT" ;;
   }
 
-
-
-
-
+  # measure: count {
+  #   type: count
+  #   hidden:  yes
+  #   drill_fields: [id, product_name, products.name, products.id, order_items.count]
+  # }
 
   measure: count {
     type: count
-    drill_fields: [id, product_name, products.name, products.id, order_items.count]
+    label: "Inventory Items Count"
   }
+
+  measure: total_cost {
+    type: sum
+    label: "Total Cost"
+    description: "Total cost of items sold from inventory"
+    sql: ${cost} ;;
+    group_label: "Costs"
+  }
+
+  measure: average_cost {
+    type:  average
+    label: "Average Cost"
+    description: "Total cost of items sold from inventory"
+    sql: ${cost} ;;
+    group_label: "Costs"
+  }
+
 }

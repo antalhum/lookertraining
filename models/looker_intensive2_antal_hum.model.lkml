@@ -45,24 +45,11 @@ explore: order_items {
 
 
 
-explore: users {
-  view_label: "Customers"
+explore: customers {
   label: "Customers"
-  join: order_items {
-    view_label: "Order Items"
-    type: left_outer
-    sql_on: ${users.id} = ${order_items.user_id} ;;
-    relationship: one_to_many
+  from: users
+  fields: [customers.user_info*]
   }
-  join: inventory_items {
-    view_label: "Inventory Items"
-    type: left_outer
-    sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-    relationship: many_to_one
-  }
-}
-
-
 
 
 

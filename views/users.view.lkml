@@ -5,6 +5,7 @@ view: users {
 
   dimension: id {
     primary_key: yes
+    hidden: yes
     type: number
     sql: ${TABLE}."ID" ;;
   }
@@ -60,6 +61,7 @@ view: users {
 
   dimension: email {
     type: string
+    hidden: yes
     sql: ${TABLE}."EMAIL" ;;
   }
 
@@ -110,8 +112,42 @@ view: users {
     group_label: "Geography"
   }
 
+  dimension: user_location {
+    type: location
+    label: "User Location"
+    description: "User latitude and longitude coordinates"
+    sql_latitude: ${latitude} ;;
+    sql_longitude: ${longitude} ;;
+    group_label: "Geography"
+  }
+
   measure: count {
     type: count
-    drill_fields: [id, last_name, first_name, events.count, order_items.count]
+    label: "Customer Count"
+  }
+
+  # measure: count {
+  #   type: count
+  #   hidden:  yes
+  #   drill_fields: [id, last_name, first_name, events.count, order_items.count]
+  # }
+
+
+  # Creating set of dimensions and measures to be shown in Customers explore
+
+  set: user_info {
+    fields: [
+      id,
+      age,
+      age_tier,
+      city_state,
+      country,
+      gender,
+      first_name,
+      last_name,
+      user_location,
+      traffic_source,
+      count
+    ]
   }
 }
