@@ -1,7 +1,7 @@
 view: order_items {
   sql_table_name: "PUBLIC"."ORDER_ITEMS"
     ;;
-  drill_fields: [id]
+  drill_fields: [product_details*]
 
   dimension: id {
     primary_key: yes
@@ -241,14 +241,13 @@ view: order_items {
 
 
   # ----- Sets of fields for drilling ------
-  set: detail {
+  set: product_details {
     fields: [
       id,
       inventory_items.product_name,
-      inventory_items.id,
-      users.last_name,
-      users.id,
-      users.first_name
+      inventory_items.product_category,
+      inventory_items.product_department,
+      inventory_items.product_distribution_center_id
     ]
   }
 }

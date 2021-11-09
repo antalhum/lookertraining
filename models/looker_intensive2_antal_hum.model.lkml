@@ -44,12 +44,24 @@ explore: order_items {
 }
 
 
-
 explore: customers {
   label: "Customers"
   from: users
   fields: [customers.user_info*]
-  }
+}
+
+
+
+# explore: customers {
+#   label: "Customers"
+#   from: users
+#   fields: [customers.user_info*, order_items*]
+#   join: order_items {
+#     sql_on: ${order_items.user_id} = ${customers.id} ;;
+#     relationship: one_to_many
+#     type: left_outer
+#   }
+#   }
 
 
 

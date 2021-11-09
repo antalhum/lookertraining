@@ -1,7 +1,7 @@
 view: users {
   sql_table_name: "PUBLIC"."USERS"
     ;;
-  drill_fields: [id]
+  drill_fields: [user_info*]
 
   dimension: id {
     primary_key: yes
@@ -19,7 +19,7 @@ view: users {
   dimension: age_tier {
     type: tier
     description: "Calculates age groups"
-    tiers: [18, 25, 35, 45, 55, 65, 75, 90]
+    tiers: [15, 26, 36, 51, 66]
     style:  integer
     sql: ${age} ;;
     group_label: "Personal info"
@@ -51,6 +51,7 @@ view: users {
       raw,
       time,
       date,
+      day_of_month,
       week,
       month,
       quarter,
@@ -95,8 +96,15 @@ view: users {
     group_label: "Geography"
   }
 
+  # dimension: state {
+  #   type: string
+  #   sql: ${TABLE}."STATE" ;;
+  #   group_label: "Geography"
+  # }
+
   dimension: state {
     type: string
+    map_layer_name: us_states
     sql: ${TABLE}."STATE" ;;
     group_label: "Geography"
   }
@@ -121,10 +129,18 @@ view: users {
     group_label: "Geography"
   }
 
+  # dimension: new_customer {
+  #   type: yesno
+  #   sql: DATEDIFF(day, CURRENT_DATE(), ${created_date}) <= 90 ;;
+  # }
+
+
   measure: count {
     type: count
     label: "Customer Count"
   }
+
+
 
   # measure: count {
   #   type: count
