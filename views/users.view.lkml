@@ -129,10 +129,10 @@ view: users {
     group_label: "Geography"
   }
 
-  # dimension: new_customer {
-  #   type: yesno
-  #   sql: DATEDIFF(day, CURRENT_DATE(), ${created_date}) <= 90 ;;
-  # }
+  dimension: new_customer {
+    type: yesno
+    sql: DATEDIFF(day, ${created_date}, CURRENT_DATE()) <= 90 ;;
+  }
 
 
   measure: count {
