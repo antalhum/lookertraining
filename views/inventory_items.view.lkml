@@ -23,6 +23,7 @@ view: inventory_items {
       date,
       week,
       month,
+      month_name,
       quarter,
       year
     ]
@@ -79,6 +80,7 @@ view: inventory_items {
       date,
       week,
       month,
+      month_name,
       quarter,
       year
     ]
