@@ -48,6 +48,7 @@ view: inventory_items {
       url: "http://www.google.com/search?q={{ value }} facebook"
       icon_url: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Facebook_icon_2013.svg"
     }
+    drill_fields: [product_category, product_name, product_sku]
   }
 
   dimension: product_category {
