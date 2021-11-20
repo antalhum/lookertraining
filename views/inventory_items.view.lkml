@@ -30,9 +30,24 @@ view: inventory_items {
     sql: ${TABLE}."CREATED_AT" ;;
   }
 
+  # dimension: product_brand {
+  #   type: string
+  #   sql: ${TABLE}."PRODUCT_BRAND" ;;
+  # }
+
   dimension: product_brand {
     type: string
     sql: ${TABLE}."PRODUCT_BRAND" ;;
+    link: {
+      label: "{{ value }}'s info"
+      url: "http://www.google.com/search?q={{ value }}"
+      icon_url: "http://google.com/favicon.ico"
+      }
+    link: {
+      label: "{{ value }}'s Facebook results"
+      url: "http://www.google.com/search?q={{ value }} facebook"
+      icon_url: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Facebook_icon_2013.svg"
+    }
   }
 
   dimension: product_category {
